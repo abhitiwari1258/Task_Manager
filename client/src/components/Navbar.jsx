@@ -21,7 +21,7 @@ const Navbar = () => {
     >
         <NavLink to="/">Login</NavLink>
         <NavLink to="/register">Register</NavLink>
-        <NavLink to="/dashboard">Dashboard</NavLink>
+        {/* <NavLink to="/dashboard">Dashboard</NavLink> */}
         {token && (<NavLink to="/dashboard">Dashboard</NavLink>)}
 
         {token && (<button onClick={handleLogout}>Logout</button>)}

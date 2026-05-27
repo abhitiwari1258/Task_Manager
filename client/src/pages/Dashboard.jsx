@@ -64,6 +64,19 @@ const Dashboard = () => {
     console.log(error.response?.data);
   }
 }
+
+  const handleComplete = async(task)=>{
+    try{
+      const token = localStorage.getItem("token")
+
+      await API.put(`/task/${task._id}`, {completed: !task.completed},{headers: {Authorization: `Bearer ${token}`}})
+
+      fetchTasks();
+
+    }catch(error){
+      console.log(error.response?.data);
+    }
+  }
   return (
     <div>
       <h1>Dashboard</h1>
@@ -103,6 +116,9 @@ const Dashboard = () => {
           <h3>{task.title}</h3>
           <p>{task.description}</p>
           <p>Priority:{task.priority}</p>
+          <p>Status : {task.completed ? "completed" : "pending"}</p>
+
+          <button onClick={()=>handleComplete(task)}>{task.completed ? "Undo" : "Complete"}</button>
           <button onClick={()=>handleDelete(task._id)}>Delete</button>
         </div>
       )}

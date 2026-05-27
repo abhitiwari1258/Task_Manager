@@ -52,6 +52,18 @@ const Dashboard = () => {
       console.log(error.response?.data);
     }
   }
+
+  const handleDelete = async(id)=>{
+    try{
+      const token = localStorage.getItem("token")
+
+      await API.delete(`/task/${id}`, {headers:{Authorization: `Bearer ${token}`}})
+
+      fetchTasks()
+    }catch(error){
+    console.log(error.response?.data);
+  }
+}
   return (
     <div>
       <h1>Dashboard</h1>
@@ -91,6 +103,7 @@ const Dashboard = () => {
           <h3>{task.title}</h3>
           <p>{task.description}</p>
           <p>Priority:{task.priority}</p>
+          <button onClick={()=>handleDelete(task._id)}>Delete</button>
         </div>
       )}
     </div>

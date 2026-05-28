@@ -7,6 +7,7 @@ const Dashboard = () => {
     description: "",
     priority: "Low",
   });
+  const [editId, setEditId] = useState(null)
 
   // console.log(form)
 
@@ -33,33 +34,33 @@ const Dashboard = () => {
     setForms({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
 
-    if (!form.title.trim()) {
-      alert("Title required");
+  //   if (!form.title.trim()) {
+  //     alert("Title required");
 
-      return;
-    }
+  //     return;
+  //   }
 
-    try {
-      const token = localStorage.getItem("token");
+  //   try {
+  //     const token = localStorage.getItem("token");
 
-      await API.post("/task", form, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+  //     await API.post("/task", form, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
 
-      setForms({
-        title: "",
-        description: "",
-        priority: "Low",
-      });
+  //     setForms({
+  //       title: "",
+  //       description: "",
+  //       priority: "Low",
+  //     });
 
-      fetchTasks();
-    } catch (error) {
-      console.log(error.response?.data);
-    }
-  };
+  //     fetchTasks();
+  //   } catch (error) {
+  //     console.log(error.response?.data);
+  //   }
+  // };
 
   const handleDelete = async (id) => {
     try {
@@ -90,6 +91,49 @@ const Dashboard = () => {
       console.log(error.response?.data);
     }
   };
+
+  const handleEdit = (task)=>{
+    console.log(task)
+    setEditId(task._id)
+    setForms({
+      title: task.title,
+      description: task.description,
+      priority: task.priority
+    })
+  }
+
+  const handleSubmit = async(e)=>{
+    e.preventDefault()
+    if (!form.title.trim()) {
+      alert("Title required");
+
+      return;
+    }
+
+    try{
+      const token = localStorage.getItem("token")
+
+      if(editId){
+        await API.put(`/task/${editId}`,form,{headers:{
+          Authorization:`Bearer ${token}`
+        }})
+        setEditId(null);
+      }else{
+        await API.post("/task", form, {headers:{
+          Authorization:`Bearer ${token}`
+        }})
+      }
+
+      setForms({
+        title:"",
+        description:"",
+        priority:"Low"
+      });
+      fetchTasks();
+    }catch(error){
+      console.log(error.response?.data);
+    }
+  }
   return (
     <div className="min-h-screen bg-slate-100 p-6">
       <div className="max-w-6xl mx-auto">
@@ -129,7 +173,7 @@ const Dashboard = () => {
           </select>
 
           <button className="bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
-            Add Task
+            {editId ? "Update Task" : "Add Task"}
           </button>
         </form>
 
@@ -181,6 +225,8 @@ const Dashboard = () => {
                   >
                     {task.completed ? "Undo" : "Complete"}
                   </button>
+
+                  <button onClick={()=>handleEdit(task)} className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Edit</button>
 
                   <button
                     className="flex-1 bg-red-500 text-white py-2 transition duration-200 rounded-lg hover:bg-red-600"

@@ -37,8 +37,8 @@ const getTasks = async (req, res) => {
 const updateTask = async (req, res) => {
     try {
         const task = await Task.findById(req.params.id)
-        console.log(task.user.toString())
-        console.log(req.user._id.toString())
+        // console.log(task.user.toString())
+        // console.log(req.user._id.toString())
 
         if (!task) {
             return res.status(404).json({

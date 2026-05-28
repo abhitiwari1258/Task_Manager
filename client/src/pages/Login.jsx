@@ -28,12 +28,16 @@ const Login = () => {
     }
 
   return (
-    <form onSubmit={handleSubmit}>
+    <div className='flex justify-center items-center h-screen bg-slate-100'>
+
+    <form className='bg-white p-8 rounded-xl shadow-lg flex flex-col gap-4 w-[350px]' onSubmit={handleSubmit}>
+        <h2 className="text-3xl text-center font-bold">Login</h2>
       <input 
       type="text"
       name="email"
       placeholder='email'
       onChange={handleChange}
+      className='border p-3 rounded outline-none focus: border-blue-500'
       />
 
       <input 
@@ -41,10 +45,13 @@ const Login = () => {
       name="password"
       placeholder='password'
       onChange={handleChange}
+      className='border p-3 rounded outline-none focus: border-blue-500'
       />
 
-      <button>Login</button>
+      <button className='bg-blue-500 text-white rounded-2xl py-3 hover:to-blue-600 transition'>Login</button>
+      
     </form>
+    </div>
   )
 }
 

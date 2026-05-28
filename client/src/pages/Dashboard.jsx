@@ -1,129 +1,201 @@
-import React, { useState, useEffect } from 'react'
-import API from '../services/api'
+import React, { useState, useEffect } from "react";
+import API from "../services/api";
 const Dashboard = () => {
-  const [tasks,setTasks] = useState([])
-  const [form,setForms] = useState({
-    title:"",
-    description:"",
-    priority:"Low"
-  })
+  const [tasks, setTasks] = useState([]);
+  const [form, setForms] = useState({
+    title: "",
+    description: "",
+    priority: "Low",
+  });
 
   // console.log(form)
 
-  useEffect(()=>{
+  useEffect(() => {
     fetchTasks();
-  },[])
+  }, []);
 
-  const fetchTasks = async()=>{
-    try{
-      const token = localStorage.getItem('token')
+  const fetchTasks = async () => {
+    try {
+      const token = localStorage.getItem("token");
       // console.log(token)
 
-      const res = await API.get('/task', {headers:{Authorization : `Bearer ${token}`}});
-      console.log(res.data)
+      const res = await API.get("/task", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      console.log(res.data);
       setTasks(res.data);
-
-    }catch(error){
-      console.log(error.response?.data)
+    } catch (error) {
+      console.log(error.response?.data);
     }
-  }
+  };
 
-  const handleChange = (e)=>{
-    setForms({...form, [e.target.name] : e.target.value})
-  }
+  const handleChange = (e) => {
+    setForms({ ...form, [e.target.name]: e.target.value });
+  };
 
-  const handleSubmit = async(e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try{
-      const token = localStorage.getItem("token")
+    if (!form.title.trim()) {
+      alert("Title required");
 
-      await API.post('/task', form, {headers:{Authorization: `Bearer ${token}`}})
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("token");
+
+      await API.post("/task", form, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
       setForms({
-        title:"",
-        description:"",
-        priority:"Low"
-      })
-
-      fetchTasks()
-
-    }catch(error){
-      console.log(error.response?.data);
-    }
-  }
-
-  const handleDelete = async(id)=>{
-    try{
-      const token = localStorage.getItem("token")
-
-      await API.delete(`/task/${id}`, {headers:{Authorization: `Bearer ${token}`}})
-
-      fetchTasks()
-    }catch(error){
-    console.log(error.response?.data);
-  }
-}
-
-  const handleComplete = async(task)=>{
-    try{
-      const token = localStorage.getItem("token")
-
-      await API.put(`/task/${task._id}`, {completed: !task.completed},{headers: {Authorization: `Bearer ${token}`}})
+        title: "",
+        description: "",
+        priority: "Low",
+      });
 
       fetchTasks();
-
-    }catch(error){
+    } catch (error) {
       console.log(error.response?.data);
     }
-  }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await API.delete(`/task/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      fetchTasks();
+    } catch (error) {
+      console.log(error.response?.data);
+    }
+  };
+
+  const handleComplete = async (task) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      await API.put(
+        `/task/${task._id}`,
+        { completed: !task.completed },
+        { headers: { Authorization: `Bearer ${token}` } },
+      );
+
+      fetchTasks();
+    } catch (error) {
+      console.log(error.response?.data);
+    }
+  };
   return (
-    <div>
-      <h1>Dashboard</h1>
+    <div className="min-h-screen bg-slate-100 p-6">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-4xl font-bold mb-8"> Task Dashboard</h1>
 
-      <form onSubmit={handleSubmit}>
-        <input type="text"
-        name='title'
-        placeholder="Title"
-        value={form.title}
-        onChange={handleChange}
-        />
-
-        <input type="text"
-        name='description'
-        placeholder="Description"
-        value={form.description}
-        onChange={handleChange}
-        />
-
-        <select name="priority"
-        value={form.priority}
-        onChange={handleChange}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white shadow-md p-6 rounded-xl grid md:grid-cols-4 gap-4 mb-10"
         >
-          <option value="Low">Low</option>
-          <option value="Medium">Medium</option>
-          <option value="High">High</option>
-        </select>
+          <input
+            type="text"
+            name="title"
+            placeholder="Title"
+            value={form.title}
+            onChange={handleChange}
+            className="border p-3 rounded-lg outline-none focus:border-blue-500"
+          />
 
-        <button>Add Task</button>
-      </form>
-      <hr />
+          <input
+            type="text"
+            name="description"
+            placeholder="Description"
+            value={form.description}
+            onChange={handleChange}
+            className="border p-3 rounded-lg outline-none focus:border-blue-500"
+          />
 
-      <h2>My Task</h2>
+          <select
+            name="priority"
+            value={form.priority}
+            onChange={handleChange}
+            className=" border p-3 rounded-lg "
+          >
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+          </select>
 
-      {tasks.map((task)=>
-        <div key={task._id} style={{border:"1px solid gray",margin:"10px",padding:"10px"}}>
-          <h3>{task.title}</h3>
-          <p>{task.description}</p>
-          <p>Priority:{task.priority}</p>
-          <p>Status : {task.completed ? "completed" : "pending"}</p>
+          <button className="bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition">
+            Add Task
+          </button>
+        </form>
 
-          <button onClick={()=>handleComplete(task)}>{task.completed ? "Undo" : "Complete"}</button>
-          <button onClick={()=>handleDelete(task._id)}>Delete</button>
-        </div>
-      )}
+        <h2 className="text-2xl font-semibold mb-6">My Task</h2>
+
+        {tasks.length === 0 ? (
+          <div className="bg-white p-10 rounded-xl shadow text-center text-gray-500">
+            No tasks found
+          </div>
+        ) : (
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {tasks.map((task) => (
+              <div
+                className="bg-white p-5 rounded-xl shadow-md flex flex-col gap-4"
+                key={task._id}
+              >
+                <div className=" flex justify-between items-center">
+                  <h3 className="text-xl font-semibold">{task.title}</h3>
+
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm text-white 
+              ${
+                task.priority === "High"
+                  ? "bg-red-500"
+                  : task.priority === "Medium"
+                    ? "bg-yellow-500"
+                    : "bg-green-500"
+              }`}
+                  >
+                    {" "}
+                    Priority:{task.priority}
+                  </span>
+                </div>
+
+                <p className="text-gray-600">{task.description}</p>
+
+                <div className="flex items-center gap-2">
+                  <span
+                    className={` px-3 py-1 rounded-full text-sm text-white ${task.completed ? "bg-green-500" : "bg-gray-500"}`}
+                  >
+                    {task.completed ? "Completed" : "Pending"}
+                  </span>
+                </div>
+
+                <div className="flex gap-3 mt-2">
+                  <button
+                    onClick={() => handleComplete(task)}
+                    className={`flex-1 transition duration-200 py-2 rounded-lg text-white ${task.completed ? "bg-yellow-500 hover:bg-yellow-600" : "bg-green-500 hover:bg-green-600"}`}
+                  >
+                    {task.completed ? "Undo" : "Complete"}
+                  </button>
+
+                  <button
+                    className="flex-1 bg-red-500 text-white py-2 transition duration-200 rounded-lg hover:bg-red-600"
+                    onClick={() => handleDelete(task._id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default Dashboard
+export default Dashboard;

@@ -8,6 +8,7 @@ const Dashboard = () => {
     priority: "Low",
   });
   const [editId, setEditId] = useState(null)
+  const [search,setSearch] = useState("");
 
   // console.log(form)
 
@@ -134,6 +135,11 @@ const Dashboard = () => {
       console.log(error.response?.data);
     }
   }
+
+  const filteredTasks = tasks.filter((task)=>
+    task.title.toLowerCase().includes(search.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-slate-100 p-6">
       <div className="max-w-6xl mx-auto">
@@ -177,6 +183,13 @@ const Dashboard = () => {
           </button>
         </form>
 
+        <input type="text"
+        placeholder="Search tasks..."
+        value={search}
+        onChange={(e)=>setSearch(e.target.value)}
+        className="w-full mb-6 p-3 border rounded-lg"
+        />
+
         <h2 className="text-2xl font-semibold mb-6">My Task</h2>
 
         {tasks.length === 0 ? (
@@ -185,7 +198,7 @@ const Dashboard = () => {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tasks.map((task) => (
+            {filteredTasks.map((task) => (
               <div
                 className="bg-white p-5 rounded-xl shadow-md flex flex-col gap-4"
                 key={task._id}

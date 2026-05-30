@@ -7,8 +7,9 @@ const Dashboard = () => {
     description: "",
     priority: "Low",
   });
-  const [editId, setEditId] = useState(null)
-  const [search,setSearch] = useState("");
+  const [editId, setEditId] = useState(null);
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("All");
 
   // console.log(form)
 
@@ -93,52 +94,67 @@ const Dashboard = () => {
     }
   };
 
-  const handleEdit = (task)=>{
-    console.log(task)
-    setEditId(task._id)
+  const handleEdit = (task) => {
+    console.log(task);
+    setEditId(task._id);
     setForms({
       title: task.title,
       description: task.description,
-      priority: task.priority
-    })
-  }
+      priority: task.priority,
+    });
+  };
 
-  const handleSubmit = async(e)=>{
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     if (!form.title.trim()) {
       alert("Title required");
 
       return;
     }
 
-    try{
-      const token = localStorage.getItem("token")
+    try {
+      const token = localStorage.getItem("token");
 
-      if(editId){
-        await API.put(`/task/${editId}`,form,{headers:{
-          Authorization:`Bearer ${token}`
-        }})
+      if (editId) {
+        await API.put(`/task/${editId}`, form, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setEditId(null);
-      }else{
-        await API.post("/task", form, {headers:{
-          Authorization:`Bearer ${token}`
-        }})
+      } else {
+        await API.post("/task", form, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
       }
 
       setForms({
-        title:"",
-        description:"",
-        priority:"Low"
+        title: "",
+        description: "",
+        priority: "Low",
       });
       fetchTasks();
-    }catch(error){
+    } catch (error) {
       console.log(error.response?.data);
     }
-  }
+  };
 
-  const filteredTasks = tasks.filter((task)=>
-    task.title.toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredTasks = tasks.filter((task) => {
+    const matchesSearch = task.title
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    if (filter === "Completed") {
+      return matchesSearch && task.completed;
+    }
+
+    if (filter === "Pending") {
+      return matchesSearch && !task.completed;
+    }
+    return matchesSearch;
+  });
 
   return (
     <div className="min-h-screen bg-slate-100 p-6">
@@ -183,12 +199,25 @@ const Dashboard = () => {
           </button>
         </form>
 
-        <input type="text"
-        placeholder="Search tasks..."
-        value={search}
-        onChange={(e)=>setSearch(e.target.value)}
-        className="w-full mb-6 p-3 border rounded-lg"
+        <input
+          type="text"
+          placeholder="Search tasks..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="w-full mb-6 p-3 border rounded-lg"
         />
+
+        <div className="flex gap-3 mb-6">
+          <button onClick={()=>setFilter("All")} 
+            className={`px-4 py-2 rounded-lg ${filter === "All" ? "bg-blue-500 text-white" : "bg-gray-200"}`} >All</button>
+
+            <button onClick={()=>setFilter("Completed")} 
+            className={`px-4 py-2 rounded-lg ${filter === "Completed" ? "bg-blue-500 text-white" : "bg-gray-200"}`} >Completed</button>
+
+            <button onClick={()=>setFilter("Pending")} 
+            className={`px-4 py-2 rounded-lg ${filter === "Pending" ? "bg-blue-500 text-white" : "bg-gray-200"}`} >Pending</button>
+
+        </div>
 
         <h2 className="text-2xl font-semibold mb-6">My Task</h2>
 
@@ -239,7 +268,12 @@ const Dashboard = () => {
                     {task.completed ? "Undo" : "Complete"}
                   </button>
 
-                  <button onClick={()=>handleEdit(task)} className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600">Edit</button>
+                  <button
+                    onClick={() => handleEdit(task)}
+                    className="flex-1 bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600"
+                  >
+                    Edit
+                  </button>
 
                   <button
                     className="flex-1 bg-red-500 text-white py-2 transition duration-200 rounded-lg hover:bg-red-600"

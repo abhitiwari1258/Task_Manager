@@ -6,7 +6,7 @@ const Dashboard = () => {
     title: "",
     description: "",
     priority: "Low",
-    dueDate:""
+    dueDate: "",
   });
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
@@ -135,7 +135,7 @@ const Dashboard = () => {
         title: "",
         description: "",
         priority: "Low",
-        dueDate:""
+        dueDate: "",
       });
       fetchTasks();
     } catch (error) {
@@ -157,6 +157,11 @@ const Dashboard = () => {
     }
     return matchesSearch;
   });
+
+  const totalTasks = tasks.length;
+  const completedTasks = tasks.filter((task) => task.completed).length;
+
+  const pendingTasks = totalTasks - completedTasks;
 
   return (
     <div className="min-h-screen bg-slate-100 p-6">
@@ -209,6 +214,25 @@ const Dashboard = () => {
           </button>
         </form>
 
+        <div className="gap-4 mb-8">
+          <div className="flex gap-4 mb-8">
+            <div className="bg-white p-6 rounded-xl shadow-md flex-1">
+              <h3 className="text-gray-500">Total Tasks</h3>
+              <p className="text-3xl font-bold text-yellow-600">{totalTasks}</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-md flex-1">
+              <h3 className="text-gray-500">Completed</h3>
+              <p className="text-3xl font-bold text-yellow-600">{completedTasks}</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow-md flex-1">
+              <h3 className="text-gray-500">Pending</h3>
+              <p className="text-3xl font-bold text-yellow-600">{pendingTasks}</p>
+            </div>
+          </div>
+        </div>
+
         <input
           type="text"
           placeholder="Search tasks..."
@@ -218,15 +242,26 @@ const Dashboard = () => {
         />
 
         <div className="flex gap-3 mb-6">
-          <button onClick={()=>setFilter("All")} 
-            className={`px-4 py-2 rounded-lg ${filter === "All" ? "bg-blue-500 text-white" : "bg-gray-200"}`} >All</button>
+          <button
+            onClick={() => setFilter("All")}
+            className={`px-4 py-2 rounded-lg ${filter === "All" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          >
+            All
+          </button>
 
-            <button onClick={()=>setFilter("Completed")} 
-            className={`px-4 py-2 rounded-lg ${filter === "Completed" ? "bg-blue-500 text-white" : "bg-gray-200"}`} >Completed</button>
+          <button
+            onClick={() => setFilter("Completed")}
+            className={`px-4 py-2 rounded-lg ${filter === "Completed" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          >
+            Completed
+          </button>
 
-            <button onClick={()=>setFilter("Pending")} 
-            className={`px-4 py-2 rounded-lg ${filter === "Pending" ? "bg-blue-500 text-white" : "bg-gray-200"}`} >Pending</button>
-
+          <button
+            onClick={() => setFilter("Pending")}
+            className={`px-4 py-2 rounded-lg ${filter === "Pending" ? "bg-blue-500 text-white" : "bg-gray-200"}`}
+          >
+            Pending
+          </button>
         </div>
 
         <h2 className="text-2xl font-semibold mb-6">My Task</h2>
@@ -262,7 +297,12 @@ const Dashboard = () => {
 
                 <p className="text-gray-600">{task.description}</p>
 
-                <p className="text-sm text gray-500">Due : {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "No Due Date"}</p>
+                <p className="text-sm text gray-500">
+                  Due :{" "}
+                  {task.dueDate
+                    ? new Date(task.dueDate).toLocaleDateString()
+                    : "No Due Date"}
+                </p>
 
                 <div className="flex items-center gap-2">
                   <span

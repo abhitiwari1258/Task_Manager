@@ -6,6 +6,7 @@ const Dashboard = () => {
     title: "",
     description: "",
     priority: "Low",
+    dueDate:""
   });
   const [editId, setEditId] = useState(null);
   const [search, setSearch] = useState("");
@@ -134,6 +135,7 @@ const Dashboard = () => {
         title: "",
         description: "",
         priority: "Low",
+        dueDate:""
       });
       fetchTasks();
     } catch (error) {
@@ -163,7 +165,7 @@ const Dashboard = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="bg-white shadow-md p-6 rounded-xl grid md:grid-cols-4 gap-4 mb-10"
+          className="bg-white shadow-md p-6 rounded-xl grid md:grid-cols-5 gap-4 mb-10"
         >
           <input
             type="text"
@@ -181,6 +183,14 @@ const Dashboard = () => {
             value={form.description}
             onChange={handleChange}
             className="border p-3 rounded-lg outline-none focus:border-blue-500"
+          />
+
+          <input
+            type="date"
+            name="dueDate"
+            value={form.dueDate}
+            onChange={handleChange}
+            className="border p-3 rounded-lg"
           />
 
           <select
@@ -251,6 +261,8 @@ const Dashboard = () => {
                 </div>
 
                 <p className="text-gray-600">{task.description}</p>
+
+                <p className="text-sm text gray-500">Due : {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "No Due Date"}</p>
 
                 <div className="flex items-center gap-2">
                   <span

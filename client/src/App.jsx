@@ -6,6 +6,7 @@ import Register from './pages/Register'
 import Dashboard from './pages/Dashboard'
 import Navbar from './components/Navbar'
 import ProtectedRoute from './components/ProtectedRoute'
+import PublicRoute from './components/PublicRoute'
 
 function App() {
 
@@ -13,8 +14,16 @@ function App() {
       <BrowserRouter>
         <Navbar/>
         <Routes>
-          <Route path='/' element={<Login/>}/>
-          <Route path='/register' element={<Register/>}/>
+          <Route path='/' element={
+            <PublicRoute>
+              <Login/>
+            </PublicRoute>
+          }/>
+          <Route path='/register' element={
+            <PublicRoute>
+              <Register/>
+            </PublicRoute>
+          }/>
           <Route path='/dashboard' element={
             <ProtectedRoute>
               <Dashboard/>

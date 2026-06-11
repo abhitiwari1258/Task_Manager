@@ -96,12 +96,13 @@ const Dashboard = () => {
   };
 
   const handleEdit = (task) => {
-    console.log(task);
+    // console.log(task);
     setEditId(task._id);
     setForms({
       title: task.title,
       description: task.description,
       priority: task.priority,
+      dueDate: task.dueDate
     });
   };
 

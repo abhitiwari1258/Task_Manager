@@ -7,7 +7,7 @@ const Register = () => {
         email:"",
         password:""
     })
-    console.log(form)
+    // console.log(form)
 
     const handleChange = (e)=>{
         setForm({...form, [e.target.name] : e.target.value})
@@ -18,7 +18,7 @@ const Register = () => {
 
         try{
             const res = await API.post("/auth/register",form)
-            console.log(res.data)
+            // console.log(res.data)
         }catch(error){
             console.log(error.responce.data)
         }

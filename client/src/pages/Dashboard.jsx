@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import API from "../services/api";
+import Loader from '../components/Loader'
 const Dashboard = () => {
+  const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [form, setForms] = useState({
     title: "",
@@ -20,6 +22,7 @@ const Dashboard = () => {
 
   const fetchTasks = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
       // console.log(token)
 
@@ -30,8 +33,19 @@ const Dashboard = () => {
       setTasks(res.data);
     } catch (error) {
       console.log(error.response?.data);
+    } finally {
+      setLoading(false);
     }
   };
+
+  if (loading) {
+    return (
+      <div
+        className="flex justify-center items-center h-screen">
+        <Loader />
+      </div>
+    );
+  }
 
   const handleChange = (e) => {
     setForms({ ...form, [e.target.name]: e.target.value });
@@ -102,7 +116,7 @@ const Dashboard = () => {
       title: task.title,
       description: task.description,
       priority: task.priority,
-      dueDate: task.dueDate
+      dueDate: task.dueDate,
     });
   };
 
@@ -224,12 +238,16 @@ const Dashboard = () => {
 
             <div className="bg-white p-6 rounded-xl shadow-md flex-1">
               <h3 className="text-gray-500">Completed</h3>
-              <p className="text-3xl font-bold text-yellow-600">{completedTasks}</p>
+              <p className="text-3xl font-bold text-yellow-600">
+                {completedTasks}
+              </p>
             </div>
 
             <div className="bg-white p-6 rounded-xl shadow-md flex-1">
               <h3 className="text-gray-500">Pending</h3>
-              <p className="text-3xl font-bold text-yellow-600">{pendingTasks}</p>
+              <p className="text-3xl font-bold text-yellow-600">
+                {pendingTasks}
+              </p>
             </div>
           </div>
         </div>

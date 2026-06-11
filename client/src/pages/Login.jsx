@@ -4,6 +4,7 @@ import API from "../services/api";
 import { useNavigate, useNavigation } from "react-router-dom";
 const Login = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     email: "",
     password: "",
@@ -21,6 +22,7 @@ const Login = () => {
     }
 
     try {
+      setLoading(true)
       const res = await API.post("/auth/login", form);
 
       if (!res.data.token) {
@@ -33,6 +35,8 @@ const Login = () => {
       navigate("/dashboard");
     } catch (err) {
       console.log(err.response?.data || err.message);
+    }finally{
+      setLoading(false)
     }
   };
 
@@ -59,8 +63,10 @@ const Login = () => {
           className="border p-3 rounded outline-none focus: border-blue-500"
         />
 
-        <button className="bg-blue-500 text-white rounded-2xl py-3 hover:to-blue-600 transition">
-          Login
+        <button 
+        disabled={loading}
+        className="bg-blue-500 text-white rounded-2xl py-3 hover:to-blue-600 transition">
+          {loading ? "Logging in..." : "Login"}
         </button>
       </form>
     </div>
